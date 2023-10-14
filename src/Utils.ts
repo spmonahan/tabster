@@ -570,6 +570,28 @@ export function documentContains(
     return !!doc?.body?.contains(element);
 }
 
+// Node.elementContains with shadow DOM support!
+export function elementContains(
+    element: Node | null | undefined, 
+    otherNode: Node | null | undefined
+): boolean {
+    let candidate = otherNode;
+    while (candidate) {
+        if (candidate === element) {
+          return true;
+        }
+    
+        // Is parentNode a DocumentFragment
+        if (candidate.parentNode?.nodeType === 11) {
+            candidate = (candidate.parentNode as ShadowRoot).host;
+        } else {
+            candidate = candidate.parentNode;
+        }
+    }
+
+    return false;
+}
+
 export function matchesSelector(
     element: HTMLElement,
     selector: string
