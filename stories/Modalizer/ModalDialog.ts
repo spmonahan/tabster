@@ -3,6 +3,7 @@
  * Licensed under the MIT License.
  */
 
+import { elementContains } from "src/Utils";
 import "./modalizer.css";
 import {
     createTabster,
@@ -73,8 +74,10 @@ export const createModalDialog = (props: ModalDialogProps) => {
         if (
             isDialogOpen() &&
             e.target &&
-            !dialog.firstElementChild?.contains(e.target as HTMLElement) &&
-            !rootBtn.contains(e.target as HTMLElement)
+            // !dialog.firstElementChild?.contains(e.target as HTMLElement) &&
+            // !rootBtn.contains(e.target as HTMLElement)
+            !elementContains(dialog.firstElementChild, e.target as HTMLElement) &&
+            !elementContains(rootBtn, e.target as HTMLElement)
         ) {
             closeDialog();
         }

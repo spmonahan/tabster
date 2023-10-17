@@ -15,6 +15,7 @@ import {
     shouldIgnoreFocus,
     WeakHTMLElement,
     triggerEvent,
+    elementContains,
 } from "../Utils";
 import { Subscribable } from "./Subscribable";
 
@@ -89,18 +90,21 @@ export class FocusedElementState
     ): void {
         let wel = FocusedElementState._lastResetElement;
         let el = wel && wel.get();
-        if (el && parent.contains(el)) {
+        // if (el && parent.contains(el)) {
+        if (el && elementContains(parent, el)) {
             delete FocusedElementState._lastResetElement;
         }
 
         el = (instance as FocusedElementState)._nextVal?.element?.get();
-        if (el && parent.contains(el)) {
+        // if (el && parent.contains(el)) {
+            if (el && elementContains(parent, el)) {
             delete (instance as FocusedElementState)._nextVal;
         }
 
         wel = (instance as FocusedElementState)._lastVal;
         el = wel && wel.get();
-        if (el && parent.contains(el)) {
+        // if (el && parent.contains(el)) {
+            if (el && elementContains(parent, el)) {
             delete (instance as FocusedElementState)._lastVal;
         }
     }
@@ -226,7 +230,8 @@ export class FocusedElementState
             }
         }
 
-        if (toFocus && !container?.contains(toFocus)) {
+        // if (toFocus && !container?.contains(toFocus)) {
+        if (toFocus && !elementContains(container, toFocus)) {
             toFocus = undefined;
         }
 
@@ -561,13 +566,15 @@ export class FocusedElementState
                     if (
                         isGroupperFirst &&
                         groupper &&
-                        uncontrolled.contains(groupper)
+                        // uncontrolled.contains(groupper)
+                        elementContains(uncontrolled, groupper)
                     ) {
                         moveFrom = groupper;
                     } else if (
                         !isGroupperFirst &&
                         mover &&
-                        uncontrolled.contains(mover)
+                        // uncontrolled.contains(mover)
+                        elementContains(uncontrolled, mover)
                     ) {
                         moveFrom = mover;
                     }

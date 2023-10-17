@@ -553,7 +553,8 @@ export function clearElementCache(
         const el = wel && wel.get();
 
         if (el && parent) {
-            if (!parent.contains(el)) {
+            // if (!parent.contains(el)) {
+            if (!elementContains(parent, el)) {
                 continue;
             }
         }
@@ -567,25 +568,33 @@ export function documentContains(
     doc: HTMLDocument | null | undefined,
     element: HTMLElement
 ): boolean {
-    return !!doc?.body?.contains(element);
+    // return !!doc?.body?.contains(element);
+    return !!elementContains(doc?.body, element);
 }
 
 // Node.elementContains with shadow DOM support!
 export function elementContains(
-    element: Node | null | undefined, 
-    otherNode: Node | null | undefined
+    element: HTMLElement | Node | null | undefined, 
+    otherNode: HTMLElement | Node | null | undefined
 ): boolean {
-    let candidate = otherNode;
-    while (candidate) {
-        if (candidate === element) {
+    if (!element || !otherNode) {
+        return false
+    }
+
+    let node: HTMLElement | Node | null | undefined = otherNode;
+    while (node) {
+        if (node === element) {
           return true;
         }
     
-        // Is parentNode a DocumentFragment
-        if (candidate.parentNode?.nodeType === 11) {
-            candidate = (candidate.parentNode as ShadowRoot).host;
+        if (typeof (node as HTMLSlotElement).assignedElements !== 'function' && (node as HTMLElement).assignedSlot?.parentNode) {
+            // Is slotted?
+            node = (node as HTMLElement).assignedSlot?.parentNode;
+        } else if (node.parentNode?.nodeType === 11) {    
+            // Is parentNode a DocumentFragment
+            node = (node.parentNode as ShadowRoot).host;
         } else {
-            candidate = candidate.parentNode;
+            node = node.parentNode;
         }
     }
 

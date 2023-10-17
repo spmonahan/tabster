@@ -14,6 +14,7 @@ import {
     DummyInput,
     DummyInputManager,
     DummyInputManagerPriorities,
+    elementContains,
     getElementUId,
     getPromise,
     HTMLElementWithDummyContainer,
@@ -257,7 +258,8 @@ export class Mover
         if (
             this._props.tabbable ||
             currentIsDummy ||
-            (currentElement && !container.contains(currentElement))
+            // (currentElement && !container.contains(currentElement))
+            (currentElement && !elementContains(container, currentElement))
         ) {
             const findProps: Types.FindNextProps = {
                 currentElement,
@@ -306,7 +308,8 @@ export class Mover
         if (
             moverElement &&
             (memorizeCurrent || visibilityAware || hasDefault) &&
-            (!moverElement.contains(state.from) ||
+            // (!moverElement.contains(state.from) ||
+            (!elementContains(moverElement, state.from) ||
                 (
                     state.from as HTMLElementWithDummyContainer
                 ).__tabsterDummyContainer?.get() === moverElement)
@@ -1321,8 +1324,10 @@ export class MoverAPI implements Types.MoverAPI {
 
                         if (anchorNode && focusNode) {
                             if (
-                                element.contains(anchorNode) &&
-                                element.contains(focusNode)
+                                // element.contains(anchorNode) &&
+                                // element.contains(focusNode)
+                                elementContains(element, anchorNode) &&
+                                elementContains(element, focusNode)
                             ) {
                                 if (anchorNode !== element) {
                                     let anchorFound = false;

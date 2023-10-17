@@ -17,6 +17,7 @@ import {
     HTMLElementWithDummyContainer,
     TabsterPart,
     WeakHTMLElement,
+    elementContains,
     getAdjacentElement,
 } from "./Utils";
 
@@ -154,7 +155,8 @@ export class Groupper
         if (
             !this._shouldTabInside &&
             currentElement &&
-            groupperElement.contains(currentElement) &&
+            // groupperElement.contains(currentElement) &&
+            elementContains(groupperElement, currentElement) &&
             !currentIsDummy
         ) {
             return { element: undefined, outOfDOMOrder: true };
@@ -164,7 +166,8 @@ export class Groupper
 
         if (
             !currentElement ||
-            !groupperElement.contains(currentElement) ||
+            // !groupperElement.contains(currentElement) ||
+            !elementContains(groupperElement, currentElement) ||
             currentIsDummy
         ) {
             return {
@@ -352,7 +355,8 @@ export class Groupper
                 !getIsActive(parentGroupper) &&
                 parentGroupperElement &&
                 state.container !== parentGroupperElement &&
-                state.container.contains(parentGroupperElement)
+                // state.container.contains(parentGroupperElement)
+                elementContains(state.container, parentGroupperElement)
             ) {
                 // Do not fall into a child groupper of inactive parent groupper if it's in the scope of the search.
                 state.skippedFocusable = true;
@@ -373,7 +377,8 @@ export class Groupper
                     if (
                         parentGroupperElement &&
                         !getIsActive(parentCtxGroupper) &&
-                        state.container.contains(parentGroupperElement) &&
+                        // state.container.contains(parentGroupperElement) &&
+                        elementContains(state.container, parentGroupperElement) &&
                         parentGroupperElement !== state.container
                     ) {
                         state.skippedFocusable = true;
@@ -383,7 +388,8 @@ export class Groupper
 
                 if (
                     groupperElement !== element &&
-                    groupperElement.contains(element)
+                    // groupperElement.contains(element)
+                    elementContains(groupperElement, element)
                 ) {
                     state.skippedFocusable = true;
                     return NodeFilter.FILTER_REJECT;
@@ -493,7 +499,8 @@ export class GroupperAPI implements Types.GroupperAPI {
         // make sure all grouppers are processed).
         if (
             focusedElement &&
-            element.contains(focusedElement) &&
+            // element.contains(focusedElement) &&
+            elementContains(element, focusedElement) &&
             !this._updateTimer
         ) {
             this._updateTimer = this._win().setTimeout(() => {
@@ -635,7 +642,8 @@ export class GroupperAPI implements Types.GroupperAPI {
                     });
                 }
             } else if (event.keyCode === Keys.Esc) {
-                if (groupperElement && groupperElement.contains(element)) {
+                // if (groupperElement && groupperElement.contains(element)) {
+                if (groupperElement && elementContains(groupperElement, element)) {
                     if (element !== groupperElement || noGoUp) {
                         next = groupper.getFirst(true);
                     } else {

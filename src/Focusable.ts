@@ -12,6 +12,7 @@ import {
     matchesSelector,
     shouldIgnoreFocus,
     HTMLElementWithDummyContainer,
+    elementContains,
 } from "./Utils";
 
 const _focusableSelector = [
@@ -348,7 +349,8 @@ export class FocusableAPI implements Types.FocusableAPI {
             return NodeFilter.FILTER_SKIP;
         }
 
-        if (!container.contains(element)) {
+        // if (!container.contains(element)) {
+        if (!elementContains(container, element)) {
             return NodeFilter.FILTER_REJECT;
         }
 
@@ -361,7 +363,8 @@ export class FocusableAPI implements Types.FocusableAPI {
         let lastToIgnore = state.lastToIgnore;
 
         if (lastToIgnore) {
-            if (lastToIgnore.contains(element)) {
+            // if (lastToIgnore.contains(element)) {
+            if (elementContains(lastToIgnore, element)) {
                 return NodeFilter.FILTER_REJECT;
             } else {
                 lastToIgnore = state.lastToIgnore = undefined;
@@ -449,11 +452,14 @@ export class FocusableAPI implements Types.FocusableAPI {
 
             if (
                 moverElement &&
-                fromMoverElement?.contains(moverElement) &&
-                container.contains(fromMoverElement) &&
+                // fromMoverElement?.contains(moverElement) &&
+                // container.contains(fromMoverElement) &&
+                elementContains(fromMoverElement, moverElement) &&
+                elementContains(container, fromMoverElement) &&
                 (!groupperElement ||
                     !mover ||
-                    fromMoverElement.contains(groupperElement))
+                    // fromMoverElement.contains(groupperElement))
+                    elementContains(fromMoverElement, groupperElement))
             ) {
                 mover = fromMover;
                 moverElement = fromMoverElement;
@@ -462,12 +468,15 @@ export class FocusableAPI implements Types.FocusableAPI {
             if (
                 groupperElement &&
                 (groupperElement === container ||
-                    !container.contains(groupperElement))
+                    // !container.contains(groupperElement))
+                    !elementContains(container, groupperElement))
             ) {
                 groupper = undefined;
             }
 
-            if (moverElement && !container.contains(moverElement)) {
+            if (moverElement && 
+                //!container.contains(moverElement)) {
+                    !elementContains(container, moverElement)) {
                 mover = undefined;
             }
 
@@ -475,7 +484,8 @@ export class FocusableAPI implements Types.FocusableAPI {
                 if (
                     moverElement &&
                     groupperElement &&
-                    !groupperElement.contains(moverElement)
+                    // !groupperElement.contains(moverElement)
+                    !elementContains(groupperElement, moverElement)
                 ) {
                     mover = undefined;
                 } else {

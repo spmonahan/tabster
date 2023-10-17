@@ -8,6 +8,7 @@ import { RootAPI } from "./Root";
 import * as Types from "./Types";
 import {
     documentContains,
+    elementContains,
     getElementUId,
     getPromise,
     TabsterPart,
@@ -571,7 +572,8 @@ export class Deloser
             this._snapshotIndex
         ].filter((we) => {
             const e = we.get();
-            return e && preserveExisting ? element.contains(e) : false;
+            // return e && preserveExisting ? element.contains(e) : false;
+            return e && preserveExisting ? elementContains(element, e) : false;
         });
     };
 
@@ -589,7 +591,8 @@ export class Deloser
             const e = we.get();
             const element = this._element.get();
 
-            if (e && element && element.contains(e)) {
+            // if (e && element && element.contains(e)) {
+                if (e && element && elementContains(element, e)) {
                 if (this._tabster.focusable.isFocusable(e)) {
                     return e;
                 }
@@ -734,7 +737,8 @@ export class DeloserAPI implements Types.DeloserAPI {
         );
 
         if (
-            element.contains(
+            // element.contains(
+            elementContains(element, 
                 this._tabster.focusedElement.getFocusedElement() ?? null
             )
         ) {
