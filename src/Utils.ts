@@ -7,6 +7,10 @@ import { nativeFocus } from "keyborg";
 
 import * as Types from "./Types";
 import { GetWindow, Visibilities, Visibility } from "./Types";
+import { elementContains } from "./pierce-dom/elementContains";
+import { ShadowDomTreeWalker } from "./pierce-dom/ShadowDomTreeWalker/ShadowDomTreeWalker";
+
+export { elementContains };
 
 interface HTMLElementWithBoundingRectCacheId extends HTMLElement {
     __tabsterCacheId?: string;
@@ -280,14 +284,7 @@ export function createElementTreeWalker(
         ? acceptNode
         : ({ acceptNode } as NodeFilter)) as unknown as NodeFilter;
 
-    return doc.createTreeWalker(
-        root,
-        NodeFilter.SHOW_ELEMENT,
-        filter,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore: We still don't want to completely break IE11, so, entityReferenceExpansion argument is not optional.
-        false /* Last argument is not optional for IE11! */
-    );
+    return new ShadowDomTreeWalker(root, NodeFilter.SHOW_ELEMENT, filter, doc);
 }
 
 export function getBoundingRect(
@@ -570,35 +567,6 @@ export function documentContains(
 ): boolean {
     // return !!doc?.body?.contains(element);
     return !!elementContains(doc?.body, element);
-}
-
-// Node.elementContains with shadow DOM support!
-export function elementContains(
-    element: HTMLElement | Node | null | undefined, 
-    otherNode: HTMLElement | Node | null | undefined
-): boolean {
-    if (!element || !otherNode) {
-        return false
-    }
-
-    let node: HTMLElement | Node | null | undefined = otherNode;
-    while (node) {
-        if (node === element) {
-          return true;
-        }
-    
-        if (typeof (node as HTMLSlotElement).assignedElements !== 'function' && (node as HTMLElement).assignedSlot?.parentNode) {
-            // Is slotted?
-            node = (node as HTMLElement).assignedSlot?.parentNode;
-        } else if (node.parentNode?.nodeType === 11) {    
-            // Is parentNode a DocumentFragment
-            node = (node.parentNode as ShadowRoot).host;
-        } else {
-            node = node.parentNode;
-        }
-    }
-
-    return false;
 }
 
 export function matchesSelector(
