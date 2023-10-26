@@ -3,6 +3,25 @@
     <head>
         <title>Tabster Test</title>
         <script type="module">
+            class XContainer extends HTMLElement {
+                constructor() {
+                    super();
+
+                    this.attachShadow({ mode: "open", delegatesFocus: false });
+                    const slot = document.createElement("slot");
+                    slot.id = "slot-id";
+                    const div = document.createElement("div");
+                    div.id = "div-id";
+                    div.appendChild(slot);
+                    this.shadowRoot.appendChild(div);
+                }
+            }
+
+            if (!window.customElements.get("x-container")) {
+                window.customElements.define("x-container", XContainer);
+            }
+        </script>
+        <script type="module">
             import {
                 disposeTabster,
                 createTabster,

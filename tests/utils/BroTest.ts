@@ -708,7 +708,10 @@ export class BroTest implements PromiseLike<undefined> {
                             return ret;
                         }
 
-                        return null;
+                        return {
+                            tag: ae?.tagName.toLowerCase(),
+                            textContent: ae?.textContent,
+                        };
                     }
                 );
 

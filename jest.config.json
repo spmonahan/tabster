@@ -6,5 +6,6 @@
         "tabster": "<rootDir>/../src/"
     },
     "testPathIgnorePatterns": ["utils"],
-    "rootDir": "tests"
+    "rootDir": "tests",
+    "testRegex": "Deloser.shadowDom.test.tsx"
 }

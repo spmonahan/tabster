@@ -284,7 +284,16 @@ export function createElementTreeWalker(
         ? acceptNode
         : ({ acceptNode } as NodeFilter)) as unknown as NodeFilter;
 
+    console.log('root', root);
     return new ShadowDomTreeWalker(root, NodeFilter.SHOW_ELEMENT, filter, doc);
+    return doc.createTreeWalker(
+        root,
+        NodeFilter.SHOW_ELEMENT,
+        filter,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: We still don't want to completely break IE11, so, entityReferenceExpansion argument is not optional.
+        false /* Last argument is not optional for IE11! */
+    );
 }
 
 export function getBoundingRect(

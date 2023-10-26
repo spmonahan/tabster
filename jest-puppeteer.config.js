@@ -5,7 +5,7 @@
 
 module.exports = {
     launch: {
-        headless: true,
+        headless: 'new',
         devtools: true,
     },
 };
