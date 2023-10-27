@@ -155,7 +155,7 @@ export class ShadowDomTreeWalker implements TreeWalker {
     if (type === 'slot') {
       walker = new SlotTreeWalker(root, this.whatToShow, this.filter);
     } else {
-      walker = this._document.createTreeWalker(root, this.whatToShow, this._filterWithSlotHandling.bind(this), false);
+      walker = this._document.createTreeWalker(root, this.whatToShow, this._filterWithSlotHandling.bind(this));
       // walker = this._document.createTreeWalker(root, this.whatToShow, this.filter);
     }
   
