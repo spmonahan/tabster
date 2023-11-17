@@ -29,3 +29,7 @@ dts/
 .storybook-static
 
 .pages-deploy
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

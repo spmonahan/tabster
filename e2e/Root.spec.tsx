@@ -1,0 +1,385 @@
+/*!
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import * as React from "react";
+import { expect } from '@playwright/test';
+import { test } from './fixture';
+import { getTabsterAttribute, Types as TabsterTypes } from "tabster";
+// import * as BroTest from "./utils/BroTest";
+// import { itIfControlled } from "./utils/test-utils";
+
+interface WindowWithTabsterCoreAndFocusState extends Window {
+    __tabsterFocusedRoot?: {
+        events: {
+            elementId?: string;
+            type: "focus" | "blur";
+            fromAdjacent?: boolean;
+        }[];
+    };
+}
+
+test.beforeEach(async ({ tabsterPage }) => {
+    await tabsterPage.goto({});
+});
+
+test("should allow to go outside of the application when tabbing forward", async ({ tabsterPage }) => {
+    await tabsterPage.renderJsx(
+        (
+            <div {...getTabsterAttribute({ root: {} })}>
+                <button>Button1</button>
+                <button>Button2</button>
+                <button>Button3</button>
+            </div>
+        )
+    );
+
+    const page = tabsterPage.page;
+
+    await page.keyboard.press("Tab");
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button1");
+    await page.keyboard.press("Tab");
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button2");
+    await page.keyboard.press("Tab");
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button3");
+    await page.keyboard.press("Tab");
+    expect(await tabsterPage.activeElementProperty('tagName')).toEqual('BODY');
+    
+        // .activeElement((el) => {
+        //     expect(el?.textContent).toEqual("Button1");
+        // })
+        // .pressTab()
+        // .activeElement((el) => {
+        //     expect(el?.textContent).toEqual("Button2");
+        // })
+        // .pressTab()
+        // .activeElement((el) => {
+        //     expect(el?.textContent).toEqual("Button3");
+        // })
+        // .pressTab()
+        // .activeElement((el) => {
+        //     expect(el?.textContent).toBeUndefined();
+        // });
+});
+
+// describe("Root", () => {
+//     beforeEach(async () => {
+//         await BroTest.bootstrapTabsterPage({});
+//     });
+
+//     itIfControlled(
+//         "should insert dummy inputs as first and last children",
+//         async () => {
+//             await new BroTest.BroTest(
+//                 (
+//                     <div id="root" {...getTabsterAttribute({ root: {} })}>
+//                         <button>Button</button>
+//                     </div>
+//                 )
+//             )
+//                 .eval((dummyAttribute) => {
+//                     return document.querySelectorAll(`[${dummyAttribute}]`)
+//                         .length;
+//                 }, TabsterTypes.TabsterDummyInputAttributeName)
+//                 .check((dummyCount: number) => {
+//                     expect(dummyCount).toBe(2);
+//                 })
+//                 .eval((dummyAttribute) => {
+//                     const first = document
+//                         .getElementById("root")
+//                         ?.children[0].hasAttribute(dummyAttribute);
+//                     const second = document
+//                         .getElementById("root")
+//                         ?.children[2].hasAttribute(dummyAttribute);
+//                     return first && second;
+//                 }, TabsterTypes.TabsterDummyInputAttributeName)
+//                 .check((areFirstAndLast: boolean) => {
+//                     expect(areFirstAndLast).toBe(true);
+//                 });
+//         }
+//     );
+
+//     it("should allow to go outside of the application when tabbing forward", async () => {
+//         await new BroTest.BroTest(
+//             (
+//                 <div {...getTabsterAttribute({ root: {} })}>
+//                     <button>Button1</button>
+//                     <button>Button2</button>
+//                     <button>Button3</button>
+//                 </div>
+//             )
+//         )
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button1");
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button2");
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button3");
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toBeUndefined();
+//             });
+//     });
+
+//     it("should allow to go outside of the application when tabbing backwards", async () => {
+//         await new BroTest.BroTest(
+//             (
+//                 <div {...getTabsterAttribute({ root: {} })}>
+//                     <button>Button1</button>
+//                     <button>Button2</button>
+//                     <button>Button3</button>
+//                 </div>
+//             )
+//         )
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button1");
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button2");
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button3");
+//             })
+//             .pressTab(true)
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button2");
+//             })
+//             .pressTab(true)
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button1");
+//             })
+//             .pressTab(true)
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toBeUndefined();
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button1");
+//             });
+//     });
+
+//     itIfControlled("should trigger root focus events", async () => {
+//         await new BroTest.BroTest(
+//             (
+//                 <div id="root" {...getTabsterAttribute({ root: {} })}>
+//                     <button id="button1">Button1</button>
+//                     <button>Button2</button>
+//                 </div>
+//             )
+//         )
+//             .eval(() => {
+//                 const win =
+//                     window as unknown as WindowWithTabsterCoreAndFocusState;
+
+//                 const focusedRoot: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"] =
+//                     (win.__tabsterFocusedRoot = {
+//                         events: [],
+//                     });
+
+//                 const tabster = getTabsterTestVariables().core;
+
+//                 tabster?.root.eventTarget.addEventListener(
+//                     "focus",
+//                     (
+//                         e: TabsterTypes.TabsterEventWithDetails<TabsterTypes.RootFocusEventDetails>
+//                     ) => {
+//                         if (e.details.element.id) {
+//                             focusedRoot.events.push({
+//                                 elementId: e.details.element.id,
+//                                 type: "focus",
+//                                 fromAdjacent: e.details.fromAdjacent,
+//                             });
+//                         }
+//                     }
+//                 );
+
+//                 tabster?.root.eventTarget.addEventListener(
+//                     "blur",
+//                     (
+//                         e: TabsterTypes.TabsterEventWithDetails<TabsterTypes.RootFocusEventDetails>
+//                     ) => {
+//                         if (e.details.element.id) {
+//                             focusedRoot.events.push({
+//                                 elementId: e.details.element.id,
+//                                 type: "blur",
+//                                 fromAdjacent: e.details.fromAdjacent,
+//                             });
+//                         }
+//                     }
+//                 );
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button1");
+//             })
+//             .eval(() => {
+//                 return (window as unknown as WindowWithTabsterCoreAndFocusState)
+//                     .__tabsterFocusedRoot;
+//             })
+//             .check(
+//                 (
+//                     res: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"]
+//                 ) => {
+//                     expect(res).toEqual({
+//                         events: [
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                         ],
+//                     });
+//                 }
+//             )
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button2");
+//             })
+//             .pressTab()
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toBeUndefined();
+//             })
+//             .eval(() => {
+//                 return (window as unknown as WindowWithTabsterCoreAndFocusState)
+//                     .__tabsterFocusedRoot;
+//             })
+//             .check(
+//                 (
+//                     res: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"]
+//                 ) => {
+//                     expect(res).toEqual({
+//                         events: [
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "blur",
+//                             },
+//                         ],
+//                     });
+//                 }
+//             )
+//             .pressTab(true)
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button2");
+//             })
+//             .eval(() => {
+//                 return (window as unknown as WindowWithTabsterCoreAndFocusState)
+//                     .__tabsterFocusedRoot;
+//             })
+//             .check(
+//                 (
+//                     res: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"]
+//                 ) => {
+//                     expect(res).toEqual({
+//                         events: [
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "blur",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                         ],
+//                     });
+//                 }
+//             )
+//             .pressTab(true)
+//             .activeElement((el) => {
+//                 expect(el?.textContent).toEqual("Button1");
+//             })
+//             .pressTab(true)
+//             .eval(() => {
+//                 return (window as unknown as WindowWithTabsterCoreAndFocusState)
+//                     .__tabsterFocusedRoot;
+//             })
+//             .check(
+//                 (
+//                     res: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"]
+//                 ) => {
+//                     expect(res).toEqual({
+//                         events: [
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "blur",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "blur",
+//                             },
+//                         ],
+//                     });
+//                 }
+//             )
+//             .eval(() => {
+//                 document.getElementById("button1")?.focus();
+//                 return (window as unknown as WindowWithTabsterCoreAndFocusState)
+//                     .__tabsterFocusedRoot;
+//             })
+//             .check(
+//                 (
+//                     res: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"]
+//                 ) => {
+//                     expect(res).toEqual({
+//                         events: [
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "blur",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "focus",
+//                             },
+//                             {
+//                                 elementId: "root",
+//                                 fromAdjacent: true,
+//                                 type: "blur",
+//                             },
+//                             { elementId: "root", type: "focus" },
+//                         ],
+//                     });
+//                 }
+//             );
+//     });
+// });

@@ -1,0 +1,12 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "target": "ESNext",
+        "outDir": "../dist/__playwrighttests__",
+        "jsx": "react",
+        "types": ["jest", "react", "node"],
+    },
+    "references": [{ "path": "../src/tsconfig.lib.json" }],
+    "include": ["**/*.ts", "**/*.tsx"]
+}
