@@ -6,6 +6,7 @@
 import { getTabsterOnElement } from "./Instance";
 import * as Types from "./Types";
 import { getBoundingRect } from "./Utils";
+import { getParent } from "./pierce-dom/getParent";
 
 interface WindowWithOutlineStyle extends Window {
     __tabsterOutline?: {
@@ -205,6 +206,7 @@ export class OutlineAPI implements Types.OutlineAPI {
         }
 
         for (let i: HTMLElement | null = element; i; i = i.parentElement) {
+        // for (let i: HTMLElement | null = element; i; i = getParent(i)) {
             if (i.classList && i.classList.contains(_props.areaClass)) {
                 return true;
             }
@@ -377,8 +379,10 @@ export class OutlineAPI implements Types.OutlineAPI {
 
         for (
             let parent = this._outlinedElement.parentElement;
+            // let parent = getParent(this._outlinedElement);
             parent && parent.nodeType === Node.ELEMENT_NODE;
             parent = parent.parentElement
+            // parent = getParent(parent)
         ) {
             // The element might be partially visible within its scrollable parent,
             // reduce the bounding rect if this is the case.

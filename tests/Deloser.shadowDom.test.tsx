@@ -4,8 +4,8 @@
  */
 
 import * as React from "react";
-import { getTabsterAttribute, Types } from "tabster";
 import * as BroTest from "./utils/BroTest";
+import { getTabsterAttribute, Types } from "tabster";
 
 describe("Deloser (shadow DOM)", () => {
     beforeEach(async () => {
@@ -23,18 +23,13 @@ describe("Deloser (shadow DOM)", () => {
                 </x-container>
             )
         )
+        .whenDefined('x-container')
+        .pressTab()
         .activeElement((el) => {
-            console.log('el0', el);
-            console.log(el ? el.tag : "WTF?");
+            console.log(el?.tag);
         })
             .pressTab()
             .activeElement((el) => {
-                console.log('el', el);
-                console.log(el ? el.tag : "WTF?");
-            })
-            .pressTab()
-            .activeElement((el) => {
-                console.log('el2', el);
                 expect(el?.textContent).toEqual("Button2");
             })
             .removeElement()

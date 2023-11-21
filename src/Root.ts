@@ -17,6 +17,7 @@ import {
     WeakHTMLElement,
 } from "./Utils";
 import { setTabsterAttribute } from "./AttributeHelpers";
+import { getParent } from "./pierce-dom/getParent";
 
 export interface WindowWithTabsterInstance extends Window {
     __tabsterInstance?: Types.TabsterCore;
@@ -433,6 +434,7 @@ export class RootAPI implements Types.RootAPI {
 
             if (!tabsterOnElement) {
                 curElement = curElement.parentElement;
+                // curElement = getParent(curElement);
                 continue;
             }
 
@@ -502,6 +504,7 @@ export class RootAPI implements Types.RootAPI {
             }
 
             curElement = curElement.parentElement;
+            // curElement = getParent(curElement);
         }
 
         // No root element could be found, try to get an auto root
@@ -555,6 +558,7 @@ export class RootAPI implements Types.RootAPI {
             let el = element as HTMLElement | null;
             el;
             el = el.parentElement
+            // el = getParent(el)
         ) {
             const root = getTabsterOnElement(tabster, el)?.root;
 

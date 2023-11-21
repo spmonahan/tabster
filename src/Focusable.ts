@@ -14,6 +14,8 @@ import {
     HTMLElementWithDummyContainer,
     elementContains,
 } from "./Utils";
+import { delegatesFocus, hasSlottedChildren } from "./pierce-dom/ShadowDomTreeWalker/utils";
+import { getParent } from "./pierce-dom/getParent";
 
 const _focusableSelector = [
     "a[href]",
@@ -93,6 +95,7 @@ export class FocusableAPI implements Types.FocusableAPI {
 
     isAccessible(el: HTMLElement): boolean {
         for (let e: HTMLElement | null = el; e; e = e.parentElement) {
+        // for (let e: HTMLElement | null = el; e; e = getParent(e)) {
             const tabsterOnElement = getTabsterOnElement(this._tabster, e);
 
             if (this._isHidden(e)) {
@@ -209,13 +212,15 @@ export class FocusableAPI implements Types.FocusableAPI {
         }
 
         if (!acceptCondition) {
-            acceptCondition = (el) =>
-                this._tabster.focusable.isFocusable(
+            acceptCondition = (el) => {
+                const f = this._tabster.focusable.isFocusable(
                     el,
                     includeProgrammaticallyFocusable,
                     false,
                     ignoreAccessibility
                 );
+                return f;
+            }
         }
 
         const acceptElementState: Types.FocusableAcceptElementState = {
@@ -269,7 +274,8 @@ export class FocusableAPI implements Types.FocusableAPI {
 
                 return !!(foundElement || shouldContinueIfNotFound);
             } else {
-                return !!(shouldContinueIfNotFound && !foundElement);
+                const reval = !!(shouldContinueIfNotFound && !foundElement);
+                return reval;
             }
         };
 
@@ -370,7 +376,7 @@ export class FocusableAPI implements Types.FocusableAPI {
                 lastToIgnore = state.lastToIgnore = undefined;
             }
         }
-
+        
         const ctx = (state.currentCtx = RootAPI.getTabsterContext(
             this._tabster,
             element
@@ -389,7 +395,7 @@ export class FocusableAPI implements Types.FocusableAPI {
             ctx.uncontrolled &&
             !state.nextUncontrolled &&
             this._tabster.focusable.isFocusable(element, undefined, true, true)
-        ) {
+        ) { 
             if (!ctx.groupper && !ctx.mover) {
                 if (
                     ctx.modalizer?.userId === this._tabster.modalizer?.activeId
@@ -415,7 +421,7 @@ export class FocusableAPI implements Types.FocusableAPI {
                 return NodeFilter.FILTER_REJECT;
             }
         }
-
+        
         if (!state.ignoreAccessibility && !this.isAccessible(element)) {
             if (this.isFocusable(element, false, true, true)) {
                 state.skippedFocusable = true;
@@ -427,7 +433,7 @@ export class FocusableAPI implements Types.FocusableAPI {
         let result: number | undefined;
 
         let fromCtx = state.fromCtx;
-
+        
         if (!fromCtx) {
             fromCtx = state.fromCtx = RootAPI.getTabsterContext(
                 this._tabster,
@@ -520,6 +526,15 @@ export class FocusableAPI implements Types.FocusableAPI {
             state.foundElement = element;
         }
 
+        // if (element.shadowRoot?.delegatesFocus && (result === NodeFilter.FILTER_REJECT || result === NodeFilter.FILTER_SKIP)) {
+        // if (isSkippedOrRejected(result) && (delegatesFocus(element) || hasSlottedChildren(element))) {
+        //     result = NodeFilter.FILTER_ACCEPT;
+        // }
+
         return result;
     }
+}
+
+const isSkippedOrRejected = (res: number) => {
+    return res === NodeFilter.FILTER_REJECT || res === NodeFilter.FILTER_SKIP;
 }

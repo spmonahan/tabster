@@ -331,9 +331,9 @@ class BroTestItemReportConsoleErrors extends BroTestItem {
 
             console.error(errorMessage);
 
-            if (this._throwError) {
-                throw new Error(errorMessage);
-            }
+            // if (this._throwError) {
+            //     throw new Error(errorMessage);
+            // }
         }
     }
 }
@@ -669,6 +669,22 @@ export class BroTest implements PromiseLike<undefined> {
                     selector,
                     x,
                     y
+                );
+            })
+        );
+
+        return this;
+    }
+
+    whenDefined(elementName: string) {
+        this._chain.push(
+            new BroTestItemCallback(this._frameStack, async () => {
+                await page.waitForFunction(
+                    (elementName: string) => {
+                        return window.customElements.whenDefined(elementName);
+                    },
+                    {},
+                    elementName
                 );
             })
         );

@@ -7,7 +7,7 @@
                 constructor() {
                     super();
 
-                    this.attachShadow({ mode: "open", delegatesFocus: false });
+                    this.attachShadow({ mode: "open", delegatesFocus: true });
                     const slot = document.createElement("slot");
                     slot.id = "slot-id";
                     const div = document.createElement("div");

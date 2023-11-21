@@ -15,6 +15,7 @@ import type {
 } from "./Types";
 import { RestorerTypes } from "./Types";
 import { TabsterPart, elementContains } from "./Utils";
+import { getParent } from "./pierce-dom/getParent";
 
 const EVENT_NAME = "restorer:restorefocus";
 const HISOTRY_DEPTH = 10;
@@ -166,6 +167,7 @@ export class RestorerAPI implements RestorerAPIType {
             weakRef &&
             // !doc.body.contains(weakRef.deref()?.parentElement ?? null)
             !elementContains(doc.body, weakRef.deref()?.parentElement ?? null)
+            // !elementContains(doc.body, getParent(weakRef.deref()) ?? null)
         ) {
             weakRef = this._history.pop();
         }

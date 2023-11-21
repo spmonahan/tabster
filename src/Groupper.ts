@@ -20,6 +20,7 @@ import {
     elementContains,
     getAdjacentElement,
 } from "./Utils";
+import { getParent } from "./pierce-dom/getParent";
 
 class GroupperDummyManager extends DummyInputManager {
     constructor(
@@ -248,6 +249,7 @@ export class Groupper
         let isParentActive = true;
 
         for (let e = element?.parentElement; e; e = e.parentElement) {
+        // for (let e = getParent(element); e; e = getParent(e)) {
             const g = getTabsterOnElement(this._tabster, e)?.groupper as
                 | Groupper
                 | undefined;
@@ -322,6 +324,7 @@ export class Groupper
         const cachedGrouppers = state.cachedGrouppers;
 
         const parentElement = this.getElement()?.parentElement;
+        // const parentElement = getParent(this.getElement());
         const parentCtx =
             parentElement &&
             RootAPI.getTabsterContext(this._tabster, parentElement);
@@ -556,6 +559,7 @@ export class GroupperAPI implements Types.GroupperAPI {
             let el = element as HTMLElement | null;
             el;
             el = el.parentElement
+            // el = getParent(el)
         ) {
             const groupper = getTabsterOnElement(this._tabster, el)?.groupper;
 
@@ -648,6 +652,7 @@ export class GroupperAPI implements Types.GroupperAPI {
                         next = groupper.getFirst(true);
                     } else {
                         const parentElement = groupperElement.parentElement;
+                        // const parentElement = getParent(groupperElement);
                         const parentCtx = parentElement
                             ? RootAPI.getTabsterContext(tabster, parentElement)
                             : undefined;

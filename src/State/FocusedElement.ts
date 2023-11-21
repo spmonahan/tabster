@@ -17,6 +17,7 @@ import {
     triggerEvent,
     elementContains,
 } from "../Utils";
+import { getParent } from "../pierce-dom/getParent";
 import { Subscribable } from "./Subscribable";
 
 export class FocusedElementState
@@ -393,7 +394,7 @@ export class FocusedElementState
         ignoreAccessibility?: boolean
     ): Types.NextTabbable | null {
         const actualContainer = container || ctx.root.getElement();
-
+        
         if (!actualContainer) {
             return null;
         }
@@ -431,6 +432,7 @@ export class FocusedElementState
             if (currentElement && !next?.element && !next?.uncontrolled) {
                 const parentElement =
                     what !== modalizer && what.getElement()?.parentElement;
+                    // what !== modalizer && getParent(what.getElement());
 
                 if (parentElement) {
                     const parentCtx = RootAPI.getTabsterContext(

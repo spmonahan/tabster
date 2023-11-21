@@ -15,6 +15,7 @@ import {
     triggerEvent,
     WeakHTMLElement,
 } from "./Utils";
+import { getParent } from "./pierce-dom/getParent";
 
 const _containerHistoryLength = 10;
 
@@ -342,6 +343,7 @@ function buildSelector(element: HTMLElement): string | undefined {
     const selector: string[] = [buildElementSelector(element)];
 
     let el = element.parentElement;
+    // let el = getParent(element);
 
     while (el) {
         const isBody = el.tagName === "BODY";
@@ -352,6 +354,7 @@ function buildSelector(element: HTMLElement): string | undefined {
         }
 
         el = el.parentElement;
+        // el = getParent(el);
     }
 
     return selector.join(" ");
@@ -750,6 +753,7 @@ export class DeloserAPI implements Types.DeloserAPI {
 
     getActions(element: HTMLElement): Types.DeloserElementActions | undefined {
         for (let e: HTMLElement | null = element; e; e = e.parentElement) {
+            // for (let e: HTMLElement | null = element; e; e = getParent(e)) {
             const tabsterOnElement = getTabsterOnElement(this._tabster, e);
 
             if (tabsterOnElement && tabsterOnElement.deloser) {
@@ -880,6 +884,7 @@ export class DeloserAPI implements Types.DeloserAPI {
         let root: Types.Root | undefined;
 
         for (let e: HTMLElement | null = element; e; e = e.parentElement) {
+        // for (let e: HTMLElement | null = element; e; e = getParent(e)) {
             const tabsterOnElement = getTabsterOnElement(tabster, e);
 
             if (tabsterOnElement) {

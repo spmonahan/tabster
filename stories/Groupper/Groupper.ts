@@ -8,6 +8,30 @@ import { getTabsterAttribute, Types as TabsterTypes } from "tabster";
 
 export type FocusableContainerProps = TabsterTypes.GroupperProps;
 
+const styles = new CSSStyleSheet();
+styles.insertRule(':host { border: 2px solid orange; display: block;');
+
+class XContainer extends HTMLElement {
+    constructor() {
+        super();
+
+        this.attachShadow({ mode: "open", delegatesFocus: true });
+        const slot = document.createElement("slot");
+        slot.id = "slot-id";
+        const div = document.createElement("div");
+        div.id = "div-id";
+        div.appendChild(slot);
+        this.shadowRoot.appendChild(div);
+
+        this.shadowRoot.adoptedStyleSheets = [styles];
+    }
+}
+
+if (!window.customElements.get("x-container")) {
+    window.customElements.define("x-container", XContainer);
+}
+
+
 export const createFocusableContainer = (props: FocusableContainerProps) => {
     const { tabbability } = props;
 

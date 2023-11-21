@@ -20,6 +20,7 @@ import {
     augmentAttribute,
     elementContains,
 } from "./Utils";
+import { getParent } from "./pierce-dom/getParent";
 
 let _wasFocusedCounter = 0;
 
@@ -841,6 +842,7 @@ export class ModalizerAPI implements Types.ModalizerAPI {
             let e: HTMLElement | null = focusedElement;
             e;
             e = e.parentElement
+            // e = getParent(e)
         ) {
             // If the newly focused element is inside some of the hidden containers,
             // remove aria-hidden from those synchronously for the screen readers

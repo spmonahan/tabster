@@ -5,6 +5,9 @@
 
 import type { ShadowRootOrSlot } from "./types";
 
+export const delegatesFocus = (node: Node): boolean => {
+  return (node as HTMLElement).shadowRoot?.delegatesFocus ?? false;
+}
 
 export const hasShadowRoot = (node: Node): boolean => {
     return (node as HTMLElement).shadowRoot !== null;
@@ -34,7 +37,7 @@ export const maybeHandleShadowRootOrSlot = (node: Node): ShadowRootOrSlot => {
 export const dfs = (root: Node, visit: (node: Node) => boolean) => {
 
   const stack = typeof (root as HTMLSlotElement).assignedNodes === 'function' ? 
-    [ ...(root as HTMLSlotElement).assignedNodes() ] 
+    [ ...(root as HTMLSlotElement).assignedNodes() ].reverse()
     : [ root ];
 
   while (stack.length) {
