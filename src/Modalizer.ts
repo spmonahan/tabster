@@ -841,8 +841,8 @@ export class ModalizerAPI implements Types.ModalizerAPI {
         for (
             let e: HTMLElement | null = focusedElement;
             e;
-            e = e.parentElement
-            // e = getParent(e)
+            // e = e.parentElement
+            e = getParent(e)
         ) {
             // If the newly focused element is inside some of the hidden containers,
             // remove aria-hidden from those synchronously for the screen readers

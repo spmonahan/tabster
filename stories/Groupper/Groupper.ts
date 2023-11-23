@@ -51,8 +51,10 @@ export const createFocusableContainer = (props: FocusableContainerProps) => {
     wrapper.setAttribute(TabsterTypes.TabsterAttributeName, attr);
 
     wrapper.innerHTML = `
-    <button>Focusable button</button>
-    <button>Focusable button</button>
+    <x-container id="sentinal">
+    <button id="btn1">Focusable button</button>
+    <button id="btn2">Focusable button</button>
+    </x-container>
   `;
 
     return wrapper;

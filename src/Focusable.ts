@@ -94,8 +94,8 @@ export class FocusableAPI implements Types.FocusableAPI {
     }
 
     isAccessible(el: HTMLElement): boolean {
-        for (let e: HTMLElement | null = el; e; e = e.parentElement) {
-        // for (let e: HTMLElement | null = el; e; e = getParent(e)) {
+        // for (let e: HTMLElement | null = el; e; e = e.parentElement) {
+        for (let e: HTMLElement | null = el; e; e = getParent(e)) {
             const tabsterOnElement = getTabsterOnElement(this._tabster, e);
 
             if (this._isHidden(e)) {
@@ -313,6 +313,14 @@ export class FocusableAPI implements Types.FocusableAPI {
                 ((isBackward
                     ? walker.previousNode()
                     : walker.nextNode()) as HTMLElement | null) || undefined;
+
+            // if (foundElement && delegatesFocus(foundElement)) {
+            //     foundElement =
+            //         ((isBackward
+            //             ? walker.previousNode()
+            //             : walker.nextNode()) as HTMLElement | null) || undefined;
+            // }
+
         } while (prepareForNextElement());
 
         if (!findAll) {
@@ -527,9 +535,9 @@ export class FocusableAPI implements Types.FocusableAPI {
         }
 
         // if (element.shadowRoot?.delegatesFocus && (result === NodeFilter.FILTER_REJECT || result === NodeFilter.FILTER_SKIP)) {
-        // if (isSkippedOrRejected(result) && (delegatesFocus(element) || hasSlottedChildren(element))) {
-        //     result = NodeFilter.FILTER_ACCEPT;
-        // }
+        if (isSkippedOrRejected(result) && (delegatesFocus(element) || hasSlottedChildren(element))) {
+            result = NodeFilter.FILTER_ACCEPT;
+        }
 
         return result;
     }

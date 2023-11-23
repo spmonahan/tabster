@@ -595,8 +595,8 @@ export class Mover
             for (
                 let el: HTMLElement | null = element;
                 el;
-                el = el.parentElement
-                // el = getParent(el)
+                // el = el.parentElement
+                el = getParent(el)
             ) {
                 const toe = getTabsterOnElement(this._tabster, el);
 
@@ -761,8 +761,8 @@ export class MoverAPI implements Types.MoverAPI {
         for (
             let el: HTMLElement | null | undefined = e;
             el;
-            el = el.parentElement
-            // el = getParent(el)
+            // el = el.parentElement
+            el = getParent(el)
         ) {
             const mover = getTabsterOnElement(this._tabster, el)?.mover;
 
@@ -834,11 +834,11 @@ export class MoverAPI implements Types.MoverAPI {
                 // the grouppers between the current element and the current mover.
                 for (
                     let el: HTMLElement | null | undefined =
-                        // getParent(groupper.getElement());
-                        groupper.getElement()?.parentElement;
+                        getParent(groupper.getElement());
+                        // groupper.getElement()?.parentElement;
                     el && el !== container;
-                    el = el.parentElement
-                    // el = getParent(el)
+                    // el = el.parentElement
+                    el = getParent(el)
                 ) {
                     if (
                         getTabsterOnElement(tabster, el)?.groupper?.isActive(

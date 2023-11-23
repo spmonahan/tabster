@@ -431,8 +431,8 @@ export class FocusedElementState
 
             if (currentElement && !next?.element && !next?.uncontrolled) {
                 const parentElement =
-                    what !== modalizer && what.getElement()?.parentElement;
-                    // what !== modalizer && getParent(what.getElement());
+                    // what !== modalizer && what.getElement()?.parentElement;
+                    what !== modalizer && getParent(what.getElement());
 
                 if (parentElement) {
                     const parentCtx = RootAPI.getTabsterContext(

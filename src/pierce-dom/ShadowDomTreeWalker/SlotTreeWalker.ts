@@ -78,10 +78,18 @@ export class SlotTreeWalker implements TreeWalker {
     }
   
     public nextNode(): Node | null {
-      const nextIndex = this._currentIndex + 1;
-      if (nextIndex >= this._nodes.length) {
-        return null;
+      let nextIndex = this._currentIndex + 1;
+      // if (nextIndex >= this._nodes.length) {
+      //   return null;
+      // }
+
+      while (this._filterFn(this._nodes[nextIndex]) !== NodeFilter.FILTER_ACCEPT) {
+        if (nextIndex >= this._nodes.length) {
+          return null;
+        }
+        nextIndex++;
       }
+
 
       this._currentIndex = nextIndex;
       return this.currentNode;
@@ -132,9 +140,10 @@ export class SlotTreeWalker implements TreeWalker {
 
     private _allowed(node: Node): boolean {
       if ((this.whatToShow & NodeFilter.SHOW_ELEMENT) === NodeFilter.SHOW_ELEMENT) {
-        if (node.nodeType === 1) { // ELEMENT_NODE
-          return this._filterFn(node) === NodeFilter.FILTER_ACCEPT;
-        }
+        return true;
+        // if (node.nodeType === 1) { // ELEMENT_NODE
+        //   return this._filterFn(node) === NodeFilter.FILTER_ACCEPT;
+        // }
       }
     
       return false;

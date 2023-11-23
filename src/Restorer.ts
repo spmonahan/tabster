@@ -166,8 +166,8 @@ export class RestorerAPI implements RestorerAPIType {
         while (
             weakRef &&
             // !doc.body.contains(weakRef.deref()?.parentElement ?? null)
-            !elementContains(doc.body, weakRef.deref()?.parentElement ?? null)
-            // !elementContains(doc.body, getParent(weakRef.deref()) ?? null)
+            // !elementContains(doc.body, weakRef.deref()?.parentElement ?? null)
+            !elementContains(doc.body, getParent(weakRef.deref()) ?? null)
         ) {
             weakRef = this._history.pop();
         }

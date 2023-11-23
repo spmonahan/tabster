@@ -3,10 +3,11 @@
  * Licensed under the MIT License.
  */
 
-import { hasShadowRoot, hasSlottedChildren, maybeHandleShadowRootOrSlot } from "./utils";
+import { elementContains } from "../elementContains";
+import { getShadowOrSlotParent, getSlotParent } from "../getParent";
+import { delegatesFocus, hasShadowRoot, hasSlottedChildren, isSlotted, maybeHandleShadowRootOrSlot } from "./utils";
 import type { TreeWalkerWithType } from "./types";
 import { SlotTreeWalker } from "./SlotTreeWalker";
-
 
 export class ShadowDomTreeWalker implements TreeWalker {
   public readonly filter: NodeFilter | null = null;
@@ -28,9 +29,10 @@ export class ShadowDomTreeWalker implements TreeWalker {
     this.root = root;
     this.filter = filter ?? null;
     this.whatToShow = whatToShow ?? NodeFilter.SHOW_ALL;
-    this._rootHasShadow = hasShadowRoot(root);
+    const rootHasShadow = hasShadowRoot(root);
+    this._rootHasShadow = rootHasShadow;
 
-    this._currentWalker = this._pushWalker(root);
+    this._currentWalker = this._pushWalker(root, rootHasShadow ? 'shadow' : 'light');
   }
 
   public get currentNode(): Node {
@@ -38,6 +40,48 @@ export class ShadowDomTreeWalker implements TreeWalker {
   }
 
   public set currentNode(node: Node) {
+
+    if (isSlotted(node)) {
+      // Element is slotted but we're not in a slot walker
+      if (this._currentWalker.__type__ !== 'slot') {
+
+        const walkers = [];
+        // walk from node back to _currentWalker.root and push each walker along the way
+        // const slot = getSlotParent(node);
+        // if (!slot) {
+        //   throw new Error("should not get here!")
+        // }
+
+        let parent = getShadowOrSlotParent(node);
+        while (parent && parent !== this._currentWalker.root) {
+
+          if (hasShadowRoot(parent)) {
+            walkers.push(this._createTreeWalker('shadow', parent));
+          } else {
+            walkers.push(this._createTreeWalker('slot', parent));
+          }
+
+          parent = getShadowOrSlotParent(parent);
+        }
+
+        // __inSlot__ ???
+        this._walkers.push(...walkers.reverse());
+        this._currentWalker = this._walkers[this._walkers.length - 1];
+      }
+    }
+
+    // if (elementContains(this.root as HTMLElement, node as HTMLElement)) {
+    //   console.log("shadow yep!");
+    // }
+
+    // if ((this.root as HTMLElement).contains(node as HTMLElement)) {
+    //   console.log("light yep!");
+    // }
+
+    // if (isSlotted(node)) {
+    //   console.log("node is slotted");
+    // }
+
     this._currentWalker.currentNode = node;
   }
 
@@ -59,12 +103,26 @@ export class ShadowDomTreeWalker implements TreeWalker {
   }
 
   public nextNode(): Node | null {
-    this._maybeHandleShadowRootOrSlot();
+    // this._maybeHandleShadowRootOrSlot();
 
     let next = this._currentWalker.nextNode();
+
+    // if (next && (delegatesFocus(next) || hasSlottedChildren(next))) {
+    //   this._maybeHandleShadowRootOrSlot(next);
+    //   next = this._currentWalker.nextNode();
+    // }
+
+    while (next && (delegatesFocus(next) || hasSlottedChildren(next))) {
+      this._maybeHandleShadowRootOrSlot(next);
+      next = this._currentWalker.nextNode();
+    }
+
     while (next === null && this._walkerIsInShadowRootOrSlot() && !this._atRootShadowWalker()) {
       this._popWalker();
       next = this._currentWalker.nextNode();
+      if (next && delegatesFocus(next)) {
+        next = this._currentWalker.nextNode();
+      }
     }
 
     return next;

@@ -9,7 +9,7 @@ import * as Types from "./Types";
 import { GetWindow, Visibilities, Visibility } from "./Types";
 import { elementContains } from "./pierce-dom/elementContains";
 import { ShadowDomTreeWalker } from "./pierce-dom/ShadowDomTreeWalker/ShadowDomTreeWalker";
-import { getParent } from "./pierce-dom/getParent";
+import { getLastChildWithShadowAndSlot, getParent } from "./pierce-dom/getParent";
 
 export { elementContains };
 
@@ -457,11 +457,11 @@ export function getScrollableContainer(
 
     if (doc) {
         for (
-            let el: HTMLElement | null = element.parentElement;
-            // let el: HTMLElement | null = getParent(element);
+            // let el: HTMLElement | null = element.parentElement;
+            let el: HTMLElement | null = getParent(element);
             el;
-            el = el.parentElement
-            // el = getParent(el)
+            // el = el.parentElement
+            el = getParent(el)
         ) {
             if (
                 el.scrollWidth > el.clientWidth ||
@@ -774,8 +774,8 @@ export class DummyInput {
 
         delete (input as HTMLElementWithDummyContainer).__tabsterDummyContainer;
 
-        input.parentElement?.removeChild(input);
-        // getParent(input)?.removeChild(input);
+        // input.parentElement?.removeChild(input);
+        getParent(input)?.removeChild(input);
     }
 
     setTopLeft(top: number, left: number): void {
@@ -930,8 +930,8 @@ export class DummyInputManager {
         const input = dummy.input;
 
         if (input) {
-            const parent = element.parentElement;
-            // const parent = getParent(element);
+            // const parent = element.parentElement;
+            const parent = getParent(element);
 
             if (parent) {
                 let insertBefore = (
@@ -1069,8 +1069,8 @@ export class DummyInputObserver implements Types.DummyInputObserver {
             delete this._updateDummyInputsTimer;
 
             for (const [dummy, callback] of this._dummies) {
-                const dummyParent = dummy.parentElement;
-                // const dummyParent = getParent(dummy);
+                // const dummyParent = dummy.parentElement;
+                const dummyParent = getParent(dummy);
 
                 if (!dummyParent || this._changedParents.has(dummyParent)) {
                     callback();
@@ -1492,8 +1492,8 @@ class DummyInputManagerCore {
         }
 
         if (this._isOutside) {
-            const elementParent = element.parentElement;
-            // const elementParent = getParent(element);
+            // const elementParent = element.parentElement;
+            const elementParent = getParent(element);
 
             if (elementParent) {
                 const nextSibling = element.nextElementSibling;
@@ -1542,8 +1542,8 @@ class DummyInputManagerCore {
         for (
             let element: HTMLElement | undefined | null = from;
             element && element.nodeType === Node.ELEMENT_NODE;
-            element = element.parentElement
-            // element = getParent(element)
+            // element = element.parentElement
+            element = getParent(element)
         ) {
             let scrollTopLeft = scrollTopLeftCache.get(element);
 
@@ -1593,13 +1593,14 @@ class DummyInputManagerCore {
 }
 
 export function getLastChild(container: HTMLElement): HTMLElement | undefined {
-    let lastChild: HTMLElement | null = null;
+    return getLastChildWithShadowAndSlot(container);
+    // let lastChild: HTMLElement | null = null;
 
-    for (let i = container.lastElementChild; i; i = i.lastElementChild) {
-        lastChild = i as HTMLElement;
-    }
+    // for (let i = container.lastElementChild; i; i = i.lastElementChild) {
+    //     lastChild = i as HTMLElement;
+    // }
 
-    return lastChild || undefined;
+    // return lastChild || undefined;
 }
 
 export function getAdjacentElement(
@@ -1613,8 +1614,8 @@ export function getAdjacentElement(
         adjacent = (
             prev ? cur.previousElementSibling : cur.nextElementSibling
         ) as HTMLElement | null;
-        cur = cur.parentElement;
-        // cur = getParent(cur);
+        // cur = cur.parentElement;
+        cur = getParent(cur);
     }
 
     return adjacent || undefined;
