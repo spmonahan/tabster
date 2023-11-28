@@ -57,7 +57,7 @@ describe("Root", () => {
     it("should allow to go outside of the application when tabbing forward", async () => {
         await new BroTest.BroTest(
             (
-                <div {...getTabsterAttribute({ root: {} })}>
+                <div {...getTabsterAttribute({ root: {}, uncontrolled: {} })}>
                     <button>Button1</button>
                     <button>Button2</button>
                     <button>Button3</button>
@@ -77,8 +77,10 @@ describe("Root", () => {
                 expect(el?.textContent).toEqual("Button3");
             })
             .pressTab()
+            .debug()
+            // .wait(1000)
             .activeElement((el) => {
-                expect(el?.textContent).toBeUndefined();
+                expect(el?.tag).toEqual("body");
             });
     });
 
@@ -114,7 +116,7 @@ describe("Root", () => {
             })
             .pressTab(true)
             .activeElement((el) => {
-                expect(el?.textContent).toBeUndefined();
+                expect(el?.tag).toEqual("body");
             })
             .pressTab()
             .activeElement((el) => {
@@ -198,7 +200,7 @@ describe("Root", () => {
             })
             .pressTab()
             .activeElement((el) => {
-                expect(el?.textContent).toBeUndefined();
+                expect(el?.tag).toEqual("body");
             })
             .eval(() => {
                 return (window as unknown as WindowWithTabsterCoreAndFocusState)

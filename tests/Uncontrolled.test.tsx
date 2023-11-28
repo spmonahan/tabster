@@ -110,7 +110,7 @@ describe("Uncontrolled", () => {
             })
             .pressTab()
             .activeElement((el) => {
-                expect(el?.textContent).toBeUndefined();
+                expect(el?.tag).toEqual("body");
             });
     });
 
@@ -285,6 +285,7 @@ describe("Uncontrolled", () => {
             })
             .pressTab(true)
             .activeElement((el) => {
+                // TODO: evaluate this
                 expect(el?.textContent).toBeUndefined();
             });
     });

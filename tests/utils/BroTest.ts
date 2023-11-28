@@ -126,13 +126,16 @@ export function getTestPageURL(parts?: TabsterParts): string {
     const port = parseInt(process.env.PORT || "0", 10) || 8080;
     const controlTab = !process.env.STORYBOOK_UNCONTROLLED;
     const rootDummyInputs = !!process.env.STORYBOOK_ROOT_DUMMY_INPUTS;
-    return `http://localhost:${port}/?controlTab=${controlTab}&rootDummyInputs=${rootDummyInputs}${
+    const url = `http://localhost:${port}/?controlTab=${controlTab}&rootDummyInputs=${rootDummyInputs}${
         parts
             ? `&parts=${Object.keys(parts)
                   .filter((part: keyof TabsterParts) => parts[part])
                   .join(",")}`
             : ""
     }&rnd=${++_lastRnd}`;
+
+    // console.error('URL', url);
+    return url;
 }
 
 export async function bootstrapTabsterPage(parts?: TabsterParts) {
@@ -687,7 +690,7 @@ export class BroTest implements PromiseLike<undefined> {
                     () => {
                         const ae = document.activeElement;
 
-                        if (ae && ae !== document.body) {
+                        if (ae) {//} && ae !== document.body) {
                             const attributes: BrowserElement["attributes"] = {};
 
                             for (const name of ae.getAttributeNames()) {
