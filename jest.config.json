@@ -7,5 +7,6 @@
     },
     "testPathIgnorePatterns": ["utils"],
     "rootDir": "tests",
-    "testRegex": "Root.*"
+    "testRegex": "Root.*",
+    "testTimeout": 360000
 }

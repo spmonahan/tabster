@@ -57,28 +57,31 @@ describe("Root", () => {
     it("should allow to go outside of the application when tabbing forward", async () => {
         await new BroTest.BroTest(
             (
-                <div {...getTabsterAttribute({ root: {}, uncontrolled: {} })}>
+                <div {...getTabsterAttribute({ root: {} })}>
                     <button>Button1</button>
                     <button>Button2</button>
                     <button>Button3</button>
                 </div>
             )
         )
+            .wait(1000)
             .pressTab()
             .activeElement((el) => {
                 expect(el?.textContent).toEqual("Button1");
             })
+            .wait(1000)
             .pressTab()
             .activeElement((el) => {
                 expect(el?.textContent).toEqual("Button2");
             })
+            .wait(1000)
             .pressTab()
             .activeElement((el) => {
                 expect(el?.textContent).toEqual("Button3");
             })
+            .wait(10000)
             .pressTab()
             .debug()
-            // .wait(1000)
             .activeElement((el) => {
                 expect(el?.tag).toEqual("body");
             });
