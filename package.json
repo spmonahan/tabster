@@ -25,6 +25,7 @@
         "build-bundle:pw": "PLAYWRIGHT=test rollup -c",
         "build-docs": "cd docs && npm install && npm run build",
         "build-storybook": "build-storybook",
+        "build:e2e": "tsc -p e2e/tsconfig.json",
         "bundle-size": "npm run build-bundle && bundle-size measure",
         "clean": "rimraf dist",
         "format": "prettier --write .",

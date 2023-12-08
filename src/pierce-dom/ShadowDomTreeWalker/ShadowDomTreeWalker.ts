@@ -3,8 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { elementContains } from "../elementContains";
-import { getShadowOrSlotParent, getSlotParent } from "../getParent";
+import { getShadowOrSlotParent } from "../getParent";
 import { delegatesFocus, hasShadowRoot, hasSlottedChildren, isSlotted, maybeHandleShadowRootOrSlot } from "./utils";
 import type { TreeWalkerWithType } from "./types";
 import { SlotTreeWalker } from "./SlotTreeWalker";
