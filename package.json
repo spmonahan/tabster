@@ -16,6 +16,13 @@
         "url": "git+https://github.com/microsoft/tabster"
     },
     "scripts": {
+        "test:server": "node ./tests-playwright/test-server.mjs",
+        "test:pw": "npx playwright test -c dist/__playwrighttests__ --ui",
+        "postinstall": "install-self",
+        "build:pw": "npm run clean && npm run build-bundle:pw",
+        "build-bundle:pw": "PLAYWRIGHT=test rollup -c",
+        "build:e2e": "tsc -p e2e/tsconfig.json",
+
         "build": "npm run clean && npm run build-bundle && npm run build-storybook",
         "build-bundle": "rollup -c",
         "build-docs": "cd docs && npm install && npm run build",
@@ -57,6 +64,7 @@
         "@babel/preset-react": "^7.16.7",
         "@babel/preset-typescript": "^7.16.7",
         "@fluentui/bundle-size": "^1.1.4",
+        "@playwright/test": "^1.39.0",
         "@rollup/plugin-babel": "^5.3.0",
         "@rollup/plugin-commonjs": "^21.0.1",
         "@rollup/plugin-json": "^4.1.0",
@@ -85,6 +93,8 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-header": "^3.1.1",
         "eslint-plugin-import": "^2.26.0",
+        "express": "^4.18.2",
+        "install-self": "^1.0.0-beta.7",
         "jest": "^27.5.1",
         "jest-puppeteer": "^6.1.0",
         "prettier": "^2.5.1",

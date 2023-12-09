@@ -11,6 +11,8 @@ import pkg from "./package.json";
 
 const extensions = [".ts"];
 
+const __DEV__ = process.env.PLAYWRIGHT === "test" ? "true" : `process.env.NODE_ENV === 'development'`
+
 /**
  * @type {import('rollup').RollupOptions}
  */
@@ -42,7 +44,7 @@ const config = [
             json(),
             replace({
                 preventAssignment: true,
-                __DEV__: `process.env.NODE_ENV === 'development'`,
+                __DEV__,
                 __VERSION__: JSON.stringify(pkg.version),
             }),
             commonjs({ extensions }),
