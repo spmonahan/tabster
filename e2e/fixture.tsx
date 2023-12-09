@@ -7,6 +7,62 @@ import * as React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { test as base, expect } from '@playwright/test';
 import { Page } from 'playwright';
+import { 
+    createTabster, 
+    disposeTabster, 
+    getCrossOrigin, 
+    getDeloser, 
+    getGroupper, 
+    getModalizer,
+    getMover,
+    getObservedElement,
+    getOutline,
+    getRestorer,
+    getTabster, 
+    getTabsterAttribute,
+    makeNoOp,
+    mergeTabsterProps,
+    setTabsterAttribute,
+    Types as TabsterTypes
+ } from "tabster";
+
+export interface TabsterTestVariables {
+    disposeTabster?: typeof disposeTabster;
+    createTabster?: typeof createTabster;
+    getTabster?: typeof getTabster;
+    getCrossOrigin?: typeof getCrossOrigin;
+    getDeloser?: typeof getDeloser;
+    getGroupper?: typeof getGroupper;
+    getModalizer?: typeof getModalizer;
+    getMover?: typeof getMover;
+    getRestorer?: typeof getRestorer;
+    getObservedElement?: typeof getObservedElement;
+    getOutline?: typeof getOutline;
+    makeNoOp?: typeof makeNoOp;
+    getTabsterAttribute?: typeof getTabsterAttribute;
+    setTabsterAttribute?: typeof setTabsterAttribute;
+    mergeTabsterProps?: typeof mergeTabsterProps;
+    core?: TabsterTypes.Tabster;
+    modalizer?: TabsterTypes.ModalizerAPI;
+    deloser?: TabsterTypes.DeloserAPI;
+    outline?: TabsterTypes.OutlineAPI;
+    mover?: TabsterTypes.MoverAPI;
+    groupper?: TabsterTypes.GroupperAPI;
+    observedElement?: TabsterTypes.ObservedElementAPI;
+    crossOrigin?: TabsterTypes.CrossOriginAPI;
+};
+
+export interface WindowWithTabsterCoreAndFocusState extends Window {
+    __tabsterFocusedRoot?: {
+        events: {
+            elementId?: string;
+            type: "focus" | "blur";
+            fromAdjacent?: boolean;
+        }[];
+    };
+
+    getTabsterTestVariables: () => TabsterTestVariables;
+}
 
 type TabsterParts = Partial<{
     modalizer: boolean;

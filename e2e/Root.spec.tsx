@@ -7,18 +7,7 @@ import * as React from "react";
 import { expect } from '@playwright/test';
 import { test } from './fixture';
 import { getTabsterAttribute, Types as TabsterTypes } from "tabster";
-// import * as BroTest from "./utils/BroTest";
-// import { itIfControlled } from "./utils/test-utils";
-
-interface WindowWithTabsterCoreAndFocusState extends Window {
-    __tabsterFocusedRoot?: {
-        events: {
-            elementId?: string;
-            type: "focus" | "blur";
-            fromAdjacent?: boolean;
-        }[];
-    };
-}
+import type { WindowWithTabsterCoreAndFocusState } from "./fixture";
 
 test.beforeEach(async ({ tabsterPage }) => {
     await tabsterPage.goto({});
@@ -112,4 +101,180 @@ test("should allow to go outside of the application when tabbing backwards", asy
             
     await tabsterPage.pressTab();
     expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button1");
+});
+
+test("should trigger root focus events", async ({ tabsterPage }) => {
+
+    await tabsterPage.renderJsx(
+        (
+            <div id="root" {...getTabsterAttribute({ root: {} })}>
+                <button id="button1">Button1</button>
+                <button>Button2</button>
+            </div>
+        )
+    );
+
+    const page = tabsterPage.page;
+
+    await page.evaluate(() => {
+        const win = window as unknown as WindowWithTabsterCoreAndFocusState;
+
+        const focusedRoot: WindowWithTabsterCoreAndFocusState["__tabsterFocusedRoot"] =
+            (win.__tabsterFocusedRoot = {
+                events: [],
+            });
+
+        const tabster = win.getTabsterTestVariables().core;
+
+        tabster?.root.eventTarget.addEventListener(
+            "focus",
+            (
+                e: TabsterTypes.TabsterEventWithDetails<TabsterTypes.RootFocusEventDetails>
+            ) => {
+                if (e.details.element.id) {
+                    focusedRoot.events.push({
+                        elementId: e.details.element.id,
+                        type: "focus",
+                    });
+                }
+            }
+        );
+
+        tabster?.root.eventTarget.addEventListener(
+            "blur",
+            (
+                e: TabsterTypes.TabsterEventWithDetails<TabsterTypes.RootFocusEventDetails>
+            ) => {
+                if (e.details.element.id) {
+                    focusedRoot.events.push({
+                        elementId: e.details.element.id,
+                        type: "blur",
+                    });
+                }
+            }
+        ); 
+    });
+
+    await tabsterPage.pressTab();
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button1");
+
+    let __tabsterFocusedRoot = await page.evaluate(() => {
+        return (window as unknown as WindowWithTabsterCoreAndFocusState).__tabsterFocusedRoot;
+    });
+
+    expect(__tabsterFocusedRoot).toEqual({
+        events: [
+            {
+                elementId: "root",
+                type: "focus",
+            },
+        ],
+    });
+
+    await tabsterPage.pressTab();
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button2");
+
+    await tabsterPage.pressTab();
+    expect(await tabsterPage.activeElementProperty('tagName')).toEqual("BODY");
+
+    __tabsterFocusedRoot = await page.evaluate(() => {
+        return (window as unknown as WindowWithTabsterCoreAndFocusState).__tabsterFocusedRoot;
+    });
+
+    expect(__tabsterFocusedRoot).toEqual({
+        events: [
+            {
+                elementId: "root",
+                type: "focus",
+            },
+            {
+                elementId: "root",
+                type: "blur",
+            },
+        ],
+    });
+
+    await tabsterPage.pressShiftTab();
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button2");
+
+    __tabsterFocusedRoot = await page.evaluate(() => {
+        return (window as unknown as WindowWithTabsterCoreAndFocusState).__tabsterFocusedRoot;
+    });
+
+    expect(__tabsterFocusedRoot).toEqual({
+        events: [
+            {
+                elementId: "root",
+                type: "focus",
+            },
+            {
+                elementId: "root",
+                type: "blur",
+            },
+            {
+                elementId: "root",
+                type: "focus",
+            },
+        ],
+    });
+
+    await tabsterPage.pressShiftTab();
+    expect(await tabsterPage.activeElementProperty('textContent')).toEqual("Button1");
+    await tabsterPage.pressShiftTab();
+
+    __tabsterFocusedRoot = await page.evaluate(() => {
+        return (window as unknown as WindowWithTabsterCoreAndFocusState).__tabsterFocusedRoot;
+    });
+
+    expect(__tabsterFocusedRoot).toEqual({
+        events: [
+            {
+                elementId: "root",
+                type: "focus",
+            },
+            {
+                elementId: "root",
+                type: "blur",
+            },
+            {
+                elementId: "root",
+                type: "focus",
+            },
+            {
+                elementId: "root",
+                type: "blur",
+            },
+        ],
+    });
+
+    __tabsterFocusedRoot = await page.evaluate(() => {
+        document.getElementById("button1")?.focus();
+        return (window as unknown as WindowWithTabsterCoreAndFocusState).__tabsterFocusedRoot;
+    });
+
+    expect(__tabsterFocusedRoot).toEqual({
+        events: [
+            {
+                elementId: "root",
+                type: "focus",
+            },
+            {
+                elementId: "root",
+                type: "blur",
+            },
+            {
+                elementId: "root",
+                type: "focus",
+            },
+            {
+                elementId: "root",
+                type: "blur",
+            },
+            {
+                elementId: "root",
+                type: "focus",
+            },
+        ],
+    });
+
 });
