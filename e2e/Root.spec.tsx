@@ -6,8 +6,8 @@
 import * as React from "react";
 import { expect } from '@playwright/test';
 import { test } from './fixture';
-import { getTabsterAttribute, Types as TabsterTypes } from "tabster";
 import type { WindowWithTabsterCoreAndFocusState } from "./fixture";
+import { getTabsterAttribute, Types as TabsterTypes } from "tabster";
 
 test.beforeEach(async ({ tabsterPage }) => {
     await tabsterPage.goto({});

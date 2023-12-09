@@ -147,6 +147,31 @@ class TabsterPage {
         return await this._page.keyboard.press("Shift+Tab");
     }
 
+    public async removeElement(selector?: string, async = false) {
+        return await this._page.evaluate(([ selector, async ]: [ string, boolean ]) => {
+            const el = selector
+                ? document.querySelector(selector)
+                : document.activeElement;
+
+            if (el && el.parentElement) {
+                if (async) {
+                    setTimeout(
+                        () => el.parentElement?.removeChild(el),
+                        0
+                    );
+                } else {
+                    el.parentElement.removeChild(el);
+                }
+            }
+        }, [ selector || "", async ]);
+    }
+
+    public async wait(duration: number): Promise<true> {
+        return new Promise((resolve) => {
+            setTimeout(() => resolve(true), duration);
+        });
+    }
+
     private _getTestPageURL(parts: TabsterParts): string {
 
         const port = parseInt(process.env.PORT || "0", 10) || 3000;
