@@ -139,12 +139,27 @@ class TabsterPage {
         }, property);
     }
 
+    public async activeElementAttribute(attribute: string): Promise<string | null> {
+        return await this._page.evaluate(async (attr) => {
+            const ae = document.activeElement;
+            if (!ae) {
+                return null;
+            }
+
+            return ae.getAttribute(attr);
+        }, attribute);
+    }
+
     public async pressTab(): Promise<void> {
         return await this._page.keyboard.press("Tab");
     }
 
     public async pressShiftTab(): Promise<void> {
         return await this._page.keyboard.press("Shift+Tab");
+    }
+
+    public async pressEnter(): Promise<void> {
+        return await this._page.keyboard.press("Enter");
     }
 
     public async removeElement(selector?: string, async = false) {
